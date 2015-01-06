@@ -1,15 +1,29 @@
 {-
-Name: <your name here>
-Collaborators: <your collaborators here, or "none">
-Notes: <any particular notes about your work -- what you struggled with,
-        what's not working, what's really cool, etc.>
+
 -}
 
-module HW01 where         -- We'll learn more about this later
+module HW01 where
 
 isThisWorking :: String
 isThisWorking = "Yes"
--- Load this file into GHCi (say, with `ghci HW01.hs`) and type
--- `isThisWorking` at the prompt. GHCi will tell you whether it's working!
 
--- Put your work below.
+lastDigit :: Integer -> Integer
+lastDigit n = n `mod` 10
+
+dropLastDigit :: Integer -> Integer
+dropLastDigit n = n `div` 10 
+
+toDigits :: Integer -> [Integer]
+toDigits n
+	| n < 1 	= []
+	| otherwise	= lastDigit n:toDigits (dropLastDigit n)
+
+reverseList :: [Integer] -> [Integer]
+reverseList [] 			= []
+reverseList (x:[]) 		= [x]
+reverseList (x:y:xs)	= y:x:reverseList (xs)
+
+doubleEveryOther :: [Integer] -> [Integer]
+doubleEveryOther [] 		= []
+doubleEveryOther (x:[]) 	= [x]
+doubleEveryOther (x:y:zs) 	= x:(y * 2):doubleEveryOther zs 
