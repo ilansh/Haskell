@@ -16,14 +16,42 @@ dropLastDigit n = n `div` 10
 toDigits :: Integer -> [Integer]
 toDigits n
 	| n < 1 	= []
-	| otherwise	= lastDigit n:toDigits (dropLastDigit n)
+	| otherwise	= toDigits (dropLastDigit n) ++ [lastDigit n]
 
 reverseList :: [Integer] -> [Integer]
 reverseList [] 			= []
-reverseList (x:[]) 		= [x]
-reverseList (x:y:xs)	= y:x:reverseList (xs)
+reverseList (x:xs)	= reverseList (xs) ++ [x]
+
+doubleEveryOtherHelper :: [Integer] -> [Integer]
+doubleEveryOtherHelper []           = []
+doubleEveryOtherHelper (x:[])       = [x]
+doubleEveryOtherHelper (x:y:zs)     = x:(y * 2):doubleEveryOtherHelper(zs)
 
 doubleEveryOther :: [Integer] -> [Integer]
 doubleEveryOther [] 		= []
 doubleEveryOther (x:[]) 	= [x]
-doubleEveryOther (x:y:zs) 	= x:(y * 2):doubleEveryOther zs 
+doubleEveryOther (x:xs) 	= reverseList (doubleEveryOtherHelper (reverseList (x:xs) ))
+
+sumDigits :: [Integer] -> Integer
+sumDigits []        = 0
+sumDigits (x:[])    = (x `div` 10) + (x `mod` 10)
+sumDigits (x:xs)    = (sumDigits [x]) + (sumDigits xs)
+
+validate :: Integer -> Bool
+validate x = (sumDigits (doubleEveryOther (toDigits x)) `mod` 10) == 0
+
+type Peg = String
+type TempPeg = Peg
+type SourcePeg = Peg 
+type DestPeg = Peg
+type Move = (Peg, Peg)
+
+hanoiHelper Integer -> Peg -> Peg -> Peg -> [Move]
+hanoiHelper 
+
+hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
+hanoi n a b c
+    | n == 0    = []
+    | n == 1    = [(a,b)]
+    | otherwise = hanoiHelp
+    
