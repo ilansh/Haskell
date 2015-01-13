@@ -41,17 +41,8 @@ validate :: Integer -> Bool
 validate x = (sumDigits (doubleEveryOther (toDigits x)) `mod` 10) == 0
 
 type Peg = String
-type TempPeg = Peg
-type SourcePeg = Peg 
-type DestPeg = Peg
 type Move = (Peg, Peg)
 
-hanoiHelper Integer -> Peg -> Peg -> Peg -> [Move]
-hanoiHelper 
-
 hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
-hanoi n a b c
-    | n == 0    = []
-    | n == 1    = [(a,b)]
-    | otherwise = hanoiHelp
-    
+hanoi 0 _ _ _ = []
+hanoi n a b c = hanoi (n - 1) a c b ++ [(a,b)] ++ hanoi (n - 1) c b a 
