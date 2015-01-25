@@ -31,9 +31,17 @@ type STemplate = Template
 formableBy :: String -> Hand -> Bool
 formableBy [] _             = True
 formableBy (x:xs) []        = False
-formableBy (x:xs) (y:ys)    = (x `elem` (y:ys)) && (formableBy xs (delete x (y:ys)))
+formableBy (x:xs) hand    = (x `elem` hand) && (formableBy xs (delete x hand))
 
 wordsFrom :: Hand -> [String]
 wordsFrom hand = filter (`formableBy` hand) allWords
 
+wordFitsTemplate :: Template -> Hand -> String -> Bool
+wordFitsTemplate [] _ []                    = True
+wordFitsTemplate [] _ (z:zs)                = False
+wordFitsTemplate (x:xs) _ []                = False
+wordFitsTemplate template [] word           = template == word
+wordFitsTemplate (x:xs) hand (z:zs)         = ((x == z) && (wordFitsTemplate xs hand zs)) || ((z `elem` hand) && (wordFitsTemplate xs (delete z hand) zs))
 
+wordsFittingTamplate :: Template -> Hand -> [String]
+wordsFittingTamplate template hand = filter (`wordFitsTemplate` template hand) (wordsFrom hand)
