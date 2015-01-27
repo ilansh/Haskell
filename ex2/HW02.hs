@@ -44,7 +44,7 @@ wordFitsTemplate template [] word           = template == word
 wordFitsTemplate (x:xs) hand (z:zs)         = ((x == z) && (wordFitsTemplate xs hand zs)) || ((x == '?') && (z `elem` hand) && (wordFitsTemplate xs (delete z hand) zs))
 
 wordsFittingTemplate :: Template -> Hand -> [String]
-wordsFittingTamplate template hand = filter (wordFitsTemplate template hand) allWords
+wordsFittingTemplate template hand = filter (wordFitsTemplate template hand) allWords
 
 scrabbleValueWord :: String -> Int
 scrabbleValueWord []        = 0
@@ -64,3 +64,19 @@ bestWordsHelper m bestSoFar (x:xs)
     | otherwise     = bestWordsHelper m bestSoFar xs
     where
         val =  (scrabbleValueWord x)
+        
+scrabbleValueTemplate :: STemplate -> String -> Int
+scrabbleValueTemplate stemplate word = scrabbleValueTemplateHelper 0 stemplate word
+   
+    
+scrabbleValueTemplateHelper :: Int -> STemplate -> String -> Int
+scrabbleValueTemplateHelper _ [] [] = 0
+scrabbleValueTemplateHelper curSum (x:xs) (y:ys)
+    | x == 'D'  = yVal * 2 + scrabbleValueTemplateHelper (yVal * 2 + curSum) xs ys  
+    | x == 'T'  = yVal * 3 + scrabbleValueTemplateHelper (yVal * 3 + curSum) xs ys
+    | x == '2'  = 2 * (yVal + curSum + scrabbleValueTemplateHelper curSum xs ys)
+    | x == '3'  = 3 * (yVal + curSum + scrabbleValueTemplateHelper curSum xs ys)
+    | otherwise = yVal + scrabbleValueTemplateHelper (yVal + curSum) xs ys 
+    where
+        yVal    = (scrabbleValue y)
+    
