@@ -34,14 +34,33 @@ formableBy (x:xs) []        = False
 formableBy (x:xs) hand    = (x `elem` hand) && (formableBy xs (delete x hand))
 
 wordsFrom :: Hand -> [String]
-wordsFrom hand = filter (`formableBy` hand) allWords
+wordsFrom hand = filter (flip formableBy hand) allWords
 
 wordFitsTemplate :: Template -> Hand -> String -> Bool
 wordFitsTemplate [] _ []                    = True
 wordFitsTemplate [] _ (z:zs)                = False
 wordFitsTemplate (x:xs) _ []                = False
 wordFitsTemplate template [] word           = template == word
-wordFitsTemplate (x:xs) hand (z:zs)         = ((x == z) && (wordFitsTemplate xs hand zs)) || ((z `elem` hand) && (wordFitsTemplate xs (delete z hand) zs))
+wordFitsTemplate (x:xs) hand (z:zs)         = ((x == z) && (wordFitsTemplate xs hand zs)) || ((x == '?') && (z `elem` hand) && (wordFitsTemplate xs (delete z hand) zs))
 
-wordsFittingTamplate :: Template -> Hand -> [String]
-wordsFittingTamplate template hand = filter (`wordFitsTemplate` template hand) (wordsFrom hand)
+wordsFittingTemplate :: Template -> Hand -> [String]
+wordsFittingTamplate template hand = filter (wordFitsTemplate template hand) allWords
+
+scrabbleValueWord :: String -> Int
+scrabbleValueWord []        = 0
+scrabbleValueWord (x:xs)    = (scrabbleValue x) + (scrabbleValueWord xs)
+
+bestWords :: [String] -> [String]
+bestWords []     = []
+bestWords words  = bestWordsHelper 0 [] words
+
+--Second string param is an accumulator, first Int is the max so far
+bestWordsHelper :: Int -> [String] -> [String] -> [String]
+bestWordsHelper _ [] []         = []
+bestWordsHelper _ bestSoFar []  = bestSoFar
+bestWordsHelper m bestSoFar (x:xs)
+    | val > m       = bestWordsHelper val [x] xs 
+    | val == m      = bestWordsHelper val (x:bestSoFar) xs
+    | otherwise     = bestWordsHelper m bestSoFar xs
+    where
+        val =  (scrabbleValueWord x)
