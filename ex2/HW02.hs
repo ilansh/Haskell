@@ -66,17 +66,16 @@ bestWordsHelper m bestSoFar (x:xs)
         val =  (scrabbleValueWord x)
         
 scrabbleValueTemplate :: STemplate -> String -> Int
-scrabbleValueTemplate stemplate word = scrabbleValueTemplateHelper 0 stemplate word
+scrabbleValueTemplate stemplate word = scrabbleValueTemplateHelper 0 1 stemplate word
    
     
-scrabbleValueTemplateHelper :: Int -> STemplate -> String -> Int
-scrabbleValueTemplateHelper _ [] [] = 0
-scrabbleValueTemplateHelper curSum (x:xs) (y:ys)
-    | x == 'D'  = yVal * 2 + scrabbleValueTemplateHelper (yVal * 2 + curSum) xs ys  
-    | x == 'T'  = yVal * 3 + scrabbleValueTemplateHelper (yVal * 3 + curSum) xs ys
-    | x == '2'  = 2 * (yVal + curSum + scrabbleValueTemplateHelper curSum xs ys)
-    | x == '3'  = 3 * (yVal + curSum + scrabbleValueTemplateHelper curSum xs ys)
-    | otherwise = yVal + scrabbleValueTemplateHelper (yVal + curSum) xs ys 
+scrabbleValueTemplateHelper :: Int -> Int -> STemplate -> String -> Int
+scrabbleValueTemplateHelper curSum wordMul [] [] = wordMul * curSum
+scrabbleValueTemplateHelper curSum wordMul (x:xs) (y:ys)
+    | x == 'D'  = scrabbleValueTemplateHelper (yVal * 2 + curSum) wordMul xs ys  
+    | x == 'T'  = scrabbleValueTemplateHelper (yVal * 3 + curSum) wordMul xs ys
+    | x == '2'  = scrabbleValueTemplateHelper (curSum + yVal) (wordMul * 2) xs ys
+    | x == '3'  = scrabbleValueTemplateHelper (curSum + yVal) (wordMul * 3) xs ys
+    | otherwise = scrabbleValueTemplateHelper (yVal + curSum) wordMul xs ys 
     where
-        yVal    = (scrabbleValue y)
-    
+        yVal    = scrabbleValue y
